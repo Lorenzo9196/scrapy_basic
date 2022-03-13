@@ -19,9 +19,14 @@ class QuotesSpider(scrapy.Spider):
             author = quote.xpath('.//*[@class="author"]/text()').extract()         
             tags = quote.xpath('.//*[@itemprop="keywords"]/@content').extract()
 
-            print("/n")
-            print(text)
-            print(author)
-            print(tags)
-            print("/n")
+            
+            yield {'Text' : text,
+                   'Author' : author,
+                   'Tags' : tags
+            }
 
+        next_page_url = response.xpath('//*[@class="next"]/a/@href').extract_first()
+        absolute_next_page_url = response.urljoin(next_page_url)
+        yield scrapy.Request(absolute_next_page_url)
+
+            # scrapy crawl quotes -o quotes.csv
